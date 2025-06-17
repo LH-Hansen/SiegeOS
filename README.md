@@ -200,11 +200,11 @@ Install via Arduino Library Manager.
 
 This project does not include REST APIs. However, Bluetooth commands follow this protocol:
 
-| Command | Description                 |
-|---------|-----------------------------|
-| `W`     | Wind-up using DC motor      |
-| `F`     | Fire the pneumatic actuator |
-| `S`     | Stop all motors             |
+| Command | Description                             |
+|---------|-----------------------------------------|
+| `WINDUP`            | Wind-up using DC motor      |
+| `FIRE`              | Fire the pneumatic actuator |
+| `ANGLE [angle]`     | Sets horizontal angle       |
 
 *Sent from a mobile app via SPP Bluetooth.*
 
@@ -214,20 +214,28 @@ This project does not include REST APIs. However, Bluetooth commands follow this
 
 ### Current Version
 
-Current version: `1.0.0`
+Current version: `0.4.0`
 
 ### Changelog
 
-#### [1.0.0] - 2025-06-15
-- Initial release with potentiometer input
-- Stepper motor angle sync
-- LCD angle feedback
+#### [0.3.0] - 2025-06-17
+- Bluetooth module and functions added
+- MotoController updated to adjust angle based on Bluetooth input
+
+#### [0.2.0] - 2025-06-15
+- H-bridge implemented
+- MotorController added and configured
+
+#### [0.1.0] - 2025-06-15
+- Potentiometer input/output added
+- LCD displays angles
+- Display controller added and configured
 
 <br>
 
 ## 🐞 Known Issues
 
-- **LCD flicker**: Under power fluctuation.
+- **Bluetooth connectivity**: Cannot connect to Bluetooth using normal device function without password.
   - **Status**: Under investigation.
 
 <br>
@@ -235,13 +243,16 @@ Current version: `1.0.0`
 ## ✅ TODO List
 
 ### [HIGH] Critical Tasks
-- [ ] Implement bluetooth
+- [ ] Add Windup feature
+- [ ] Build firing funcntion
+- [x] Implement bluetooth
 - [ ] Cretae mobile app
-- [ ] Add LED feedback
+- [ ] Refactor for Ardino UNO R4
 
 ### [MEDIUM] Important Features
-- [ ] Improve Bluetooth data validation.
+- [x] Improve Bluetooth data validation.
 - [ ] Implement buzzer warning before firing
+- [ ] Add LED feedback
 
 ### [LOW] Enhancements
 - [x] Refactor code into modules.
