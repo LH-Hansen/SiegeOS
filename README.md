@@ -17,7 +17,7 @@ SiegeOS is a next-generation, Bluetooth-enabled catapult system designed for pre
 - [Diagrams](#-diagrams)
 - [Framework](#%EF%B8%8F-framework)
 - [Dependencies](#-dependencies)
-- [API Documentation](#-api-documentation)
+- [SPP Commands](#-spp-commands)
 - [Versioning & Changelog](#-versioning-and-changelog)
 - [TODO](#-todo-list)
 - [Known Issues](#-known-issues)
@@ -196,9 +196,9 @@ Install via Arduino Library Manager.
 
 <br>
 
-## 📡 API Documentation
+## 📡 SPP Commands
 
-This project does not include REST APIs. However, Bluetooth commands follow this protocol:
+Bluetooth commands follow this protocol:
 
 | Command | Description                             |
 |---------|-----------------------------------------|
