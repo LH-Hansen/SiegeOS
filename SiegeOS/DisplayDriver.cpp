@@ -11,6 +11,7 @@ void CrystalDisplay::begin() {
 }
 
 void CrystalDisplay::displayLine(byte row, const __FlashStringHelper* label, byte angle)
+
 {
   lcd.setCursor(0, row);
   lcd.print(label);

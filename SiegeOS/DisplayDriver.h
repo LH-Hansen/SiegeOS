@@ -11,6 +11,7 @@ public:
   void printAngle(byte inputAngle, byte outputAngle);
 
   private:
+
   void displayLine(byte row, const __FlashStringHelper* label, byte angle);
 };
 
