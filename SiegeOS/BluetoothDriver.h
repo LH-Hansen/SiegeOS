@@ -2,7 +2,6 @@
 #define BluetoothDriver_H
 
 #include <Arduino.h>
-
 #include <ArduinoBLE.h>
 
 class Bluetooth {
@@ -25,7 +24,6 @@ private:
   BLEService* commandService;
   BLEStringCharacteristic* requestCharacteristic;
   BLEStringCharacteristic* responseCharacteristic;
-
 };
 
 #endif
