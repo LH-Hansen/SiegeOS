@@ -38,4 +38,3 @@ void L293D::runMotor(byte direction, int enabled, byte speed) {
   }
   analogWrite(ENABLE_PIN, speed);
 }
-

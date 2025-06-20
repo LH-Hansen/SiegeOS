@@ -6,7 +6,7 @@ void MotorController::begin()
 {
   potentiometer.begin();
   bluetooth.begin(potentiometer.getMaxAngle()); 
-  L293D.begin();
+  motorDriver.begin();
 }
 
 void MotorController::adjustAngle()
@@ -17,16 +17,12 @@ void MotorController::adjustAngle()
   byte motorAngle = potentiometer.getAngle();
 
   if (curAngle > motorAngle) {
-    L293D.runMotor(L293D::Forward(), L293D::Enabled(), L293D::getDefaultSpeed());
+    motorDriver.runMotor(motorDriver.Forward(), motorDriver.Enabled(), motorDriver.getDefaultSpeed());
   }
   else if (curAngle < motorAngle) {
-    L293D.runMotor(L293D::Backward(), L293D::Enabled(), L293D::getDefaultSpeed());
+    motorDriver.runMotor(motorDriver.Backward(), motorDriver.Enabled(), motorDriver.getDefaultSpeed());
   }
   else {
-    L293D.runMotor(L293D::Stop(), L293D::Disabled(), L293D::getDefaultSpeed());
+    motorDriver.runMotor(motorDriver.Stop(), motorDriver.Disabled(), motorDriver.getDefaultSpeed());
   }
-
-  // Serial.print(curAngle);
-  // Serial.print("  ");
-  // Serial.println(motorAngle);
 }

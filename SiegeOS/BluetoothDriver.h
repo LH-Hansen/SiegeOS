@@ -3,24 +3,29 @@
 
 #include <Arduino.h>
 
+#include <ArduinoBLE.h>
+
 class Bluetooth {
-  public:
-    Bluetooth();                //Constructor
+public:
+  Bluetooth();
 
-    void begin(byte outputMax);  
-    void listenForCommands();   
+  void begin(byte maxAngle);
+  void listenForCommands();
 
-    byte getAngle();              
+  int getAngle() const {
+    return curAngle;
+  }
 
-  private:
-    static const byte BUFFER_SIZE = 32;
-    char inputBuffer[BUFFER_SIZE];
-    byte bufferIndex = 0;
+private:
+  void handleCommand(const String& cmd);
 
-    byte maxAngle;
-    byte curAngle = 0;
+  byte maxAngle;
+  byte curAngle;
 
-    void handleCommand(char* cmd);
+  BLEService* commandService;
+  BLEStringCharacteristic* requestCharacteristic;
+  BLEStringCharacteristic* responseCharacteristic;
+
 };
 
 #endif

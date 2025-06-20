@@ -1,92 +1,89 @@
 #include "BluetoothDriver.h"
+#include <Arduino.h>
 
-Bluetooth::Bluetooth() {
+// UUIDs for your BLE service and characteristics
+const char* SERVICE_UUID = "19b10000-e8f2-537e-4f6c-d104768a1210";
+const char* REQUEST_UUID = "19b10001-e8f2-537e-4f6c-d104768a1211";
+const char* RESPONSE_UUID = "19b10002-e8f2-537e-4f6c-d104768a1212";
+
+Bluetooth::Bluetooth()
+  : commandService(nullptr),
+    requestCharacteristic(nullptr),
+    responseCharacteristic(nullptr) {
+  curAngle = 0;
+  maxAngle = 180;  // default, will be overridden in begin()
 }
 
-void Bluetooth::begin(byte outputMax)
-{
-  Serial.begin(9600);
-  
-  maxAngle = outputMax;
-  curAngle = maxAngle / 2;
+void Bluetooth::begin(byte potMaxAngle) {
+  maxAngle = potMaxAngle;
+  curAngle = potMaxAngle / 2;
 
-  Serial.print("Default angle: ");
-  Serial.print(curAngle);
+  if (!BLE.begin()) {
+    Serial.println("Failed to start BLE!");
+    while (1)
+      ;
+  }
+
+  // Now that BLE has started, create service and characteristics
+  commandService = new BLEService(SERVICE_UUID);
+  requestCharacteristic = new BLEStringCharacteristic(REQUEST_UUID, BLEWrite, 32);
+  responseCharacteristic = new BLEStringCharacteristic(RESPONSE_UUID, BLENotify, 32);
+
+  // Add characteristics to service
+  commandService->addCharacteristic(*requestCharacteristic);
+  commandService->addCharacteristic(*responseCharacteristic);
+
+  BLE.setDeviceName("SiegeOS");
+  BLE.setLocalName("SiegeOS");
+
+  BLE.setAdvertisedService(*commandService);
+  BLE.addService(*commandService);
+  BLE.advertise();
+
+  Serial.println("BLE is ready and advertising.");
 }
 
-void Bluetooth::handleCommand(char* cmd) {
+void Bluetooth::handleCommand(const String& cmd) {
   Serial.print("Received command: ");
   Serial.println(cmd);
 
-  if (strcmp(cmd, "FIRE") == 0) {
+  if (cmd == "FIRE") {
     Serial.println("-> Firing!");
 
-  } else if (strcmp(cmd, "WINDUP") == 0) {
+  } else if (cmd == "WINDUP") {
     Serial.println("-> Winding up...");
 
-  } else if (strncmp(cmd, "ANGLE ", 6) == 0) {
-  int angleInput = atoi(cmd + 6);
+  } else if (cmd.startsWith("ANGLE ")) {
+    int angle = cmd.substring(6).toInt();
 
-  if (angleInput < 0 || angleInput > maxAngle) {
-    Serial.print("-> Angle out of bounds: ");
-    Serial.println(angleInput);
-    curAngle = maxAngle / 2;
-  } else {
-    curAngle = angleInput;
-    Serial.print("-> Set angle to: ");
-    Serial.println(curAngle);
-  }
+    if (angle < 0 || angle > maxAngle) {
+      Serial.print("-> Out of bounds: ");
+      Serial.println(angle);
+
+      curAngle = maxAngle / 2;
+    } else {
+      curAngle = angle;
+
+      Serial.print("-> Angle set to: ");
+      Serial.println(angle);
+    }
 
   } else {
     Serial.println("-> Unknown command");
   }
+
+  responseCharacteristic->writeValue("ACK");
 }
 
 void Bluetooth::listenForCommands() {
-  while (Serial.available()) {
-    char c = Serial.read();
+  BLEDevice central = BLE.central();
 
-    if (c == '\n') {
-      inputBuffer[bufferIndex] = '\0';  // Null-terminate the string
-
-      handleCommand(inputBuffer);
-
-      // Reset buffer for next message
-      bufferIndex = 0;
-    } else if (c != '\r') {
-      if (bufferIndex < BUFFER_SIZE - 1) {
-        inputBuffer[bufferIndex++] = c;
-      } else {
-        bufferIndex = 0;  // Reset on overflow
-        Serial.println("Error: input too long");
-      }
+  if (central) {
+    if (requestCharacteristic->written()) {
+      String cmd = requestCharacteristic->value();
+      Serial.println(cmd);
+      cmd.trim();  // remove trailing newline/spaces
+      handleCommand(cmd.c_str());
     }
   }
 }
-
-byte Bluetooth::getAngle(){
-  return curAngle;
-}
-
-// int test() {
-//   while (Serial.available()) {
-//     char c = Serial.read();
-
-//     if (c == '\n') {
-//       inputBuffer[bufferIndex] = '\0';  // Null-terminate the string
-
-//       // Handle the command
-//       handleCommand(inputBuffer);
-
-//       // Reset buffer for next message
-//       bufferIndex = 0;
-//     } else if (c != '\r') {
-//       if (bufferIndex < BUFFER_SIZE - 1) {
-//         inputBuffer[bufferIndex++] = c;
-//       } else {
-//         bufferIndex = 0;  // Reset on overflow
-//         Serial.println("Error: input too long");
-//       }
-//     }
-//   }
-// }

@@ -11,7 +11,8 @@ public:
   void printAngle(byte inputAngle, byte outputAngle);
 
   private:
-  void CrystalDisplay::displayLine(byte row, __FlashStringHelper* label, byte angle);
+
+  void displayLine(byte row, const __FlashStringHelper* label, byte angle);
 };
 
 #endif

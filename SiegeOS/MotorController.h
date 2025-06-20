@@ -15,7 +15,7 @@ public:
 private:
   Bluetooth bluetooth;
   Potentiometer potentiometer;
-  L293D L293D;
+  L293D motorDriver;
 };
 
 #endif
